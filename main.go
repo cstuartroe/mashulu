@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	segments, err := segment.SegmentAndValidate("wa sela te wa sela te yo")
+	segments, err := segment.SegmentAndValidate("ga ni te")
 	if err != nil {
 		fmt.Println(err)
 	}

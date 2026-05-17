@@ -104,7 +104,7 @@ func (p *parser) Parse() ([]*ast.Sentence, error) {
 	}
 
 	for {
-		verb, postverbs, err := p.grabClause()
+		verb, postverbs, err := p.grabClause(true)
 		if err != nil {
 			return nil, err
 		}
@@ -207,7 +207,7 @@ func (p *parser) grabNounPhrase() (*ast.NounPhrase, error) {
 			head = nc
 			p.advance()
 
-			verb, postverbs, err := p.grabClause()
+			verb, postverbs, err := p.grabClause(false)
 			if err != nil {
 				return nil, err
 			}
@@ -222,7 +222,7 @@ func (p *parser) grabNounPhrase() (*ast.NounPhrase, error) {
 				head = nc
 				p.advance()
 
-				verb, postverbs, err := p.grabClause()
+				verb, postverbs, err := p.grabClause(false)
 				if err != nil {
 					return nil, err
 				}
@@ -256,7 +256,7 @@ func (p *parser) grabNounPhrase() (*ast.NounPhrase, error) {
 	}, nil
 }
 
-func (p *parser) grabClause() (*ast.Verb, []ast.Postverb, error) {
+func (p *parser) grabClause(topLevel bool) (*ast.Verb, []ast.Postverb, error) {
 	verb := ast.Verb{}
 	var err error
 
@@ -266,6 +266,8 @@ func (p *parser) grabClause() (*ast.Verb, []ast.Postverb, error) {
 		if err != nil {
 			return nil, nil, err
 		}
+	} else if topLevel {
+		return nil, nil, fmt.Errorf("Top-level verb requires TAME complex")
 	}
 	verb.Stem, err = p.grabContent()
 	if err != nil {
@@ -340,7 +342,7 @@ func (p *parser) grabNounModifier() (ast.NounModifier, error) {
 	if v == "u" && ok {
 		p.advance()
 
-		verb, postverbs, err := p.grabClause()
+		verb, postverbs, err := p.grabClause(false)
 		if err != nil {
 			return nil, err
 		}
